@@ -23,7 +23,7 @@ jobs:
           npm config set registry https://registry.npmjs.org/ # Explicitly set registry
           npm cache clean --force # Clear npm cache
           npm install -g expo-cli@latest # Specify latest
-          npm install -g @expo/eas-cli@latest
+          npm install -g eas-cli@latest
           
       - name: Verify Installation
         run: |
