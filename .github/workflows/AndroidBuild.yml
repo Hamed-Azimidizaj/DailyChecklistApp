@@ -16,9 +16,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x # Or your preferred Node.js version
+          node-version: 18.x # Or your preferred Node.js version
           cache: 'npm'
           cache-dependency-path: ${{ github.workspace }}/package-lock.json # Use absolute path
+        env:
+          ACTIONS_STEP_DEBUG: true # Enable debugging
 
       - name: Install Expo CLI and dependencies
         run: |
