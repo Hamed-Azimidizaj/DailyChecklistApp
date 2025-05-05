@@ -9,30 +9,34 @@ jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
-    env:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Using the latest major version
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x # Or your preferred Node.js version
-          
+          node-version: 20.x # Use a specific LTS version for stability
 
       - name: Install Expo CLI and EAS CLI
         run: |
-          npm install -g expo-cli
-          npm install -g @expo/eas-cli  # Install EAS CLI
+          npm config set registry https://registry.npmjs.org/ # Explicitly set registry
+          npm cache clean --force # Clear npm cache
+          npm install -g expo-cli@latest # Specify latest
+          npm install -g @expo/eas-cli@latest
+          
+      - name: Verify Installation
+        run: |
+          expo --version
+          eas --version # Verify installation
 
       - name: Configure EAS
         run: |
-          expo config --non-interactive #important for non interactive
+          expo config --non-interactive
 
       - name: Build Android APK
-        run: eas build -p android --profile production --non-interactive
+        run: |
+          eas build -p android --profile production --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
