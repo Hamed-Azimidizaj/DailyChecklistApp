@@ -25,15 +25,9 @@ jobs:
           npm install -g expo-cli eas-cli
           npm install
 
-      - name: Configure project
+      - name: Configure project files
         run: |
-          # Install jq for JSON manipulation
-          sudo apt-get install -y jq
-          
-          # Update SDK version if needed
-          jq '.expo.sdkVersion = "49.0.0"' app.json > app.tmp.json && mv app.tmp.json app.json
-          
-          # Create production eas.json
+          # Create/update eas.json with Android configuration
           echo '{
             "build": {
               "production": {
@@ -41,27 +35,45 @@ jobs:
                   "buildType": "apk",
                   "gradleCommand": ":app:assembleRelease",
                   "withoutCredentials": false
-                },
-                "env": {
-                  "ENVIRONMENT": "production"
                 }
               }
+            },
+            "cli": {
+              "requireCommit": false,
+              "promptToConfigurePushNotifications": false
             }
           }' > eas.json
 
-      - name: Initialize EAS
+          # Update app.json with required fields
+          if [ -f "app.json" ]; then
+            jq '.expo.android.package = "com.HAZdev.dailychecklist" | .expo.android.versionCode = 1' app.json > app.tmp.json && mv app.tmp.json app.json
+          else
+            echo '{
+              "expo": {
+                "name": "DailyChecklist",
+                "android": {
+                  "package": "com.HAZdev.dailychecklist",
+                  "versionCode": 1
+                }
+              }
+            }' > app.json
+          fi
+
+      - name: Initialize EAS (non-interactive)
         run: |
-          eas init --non-interactive --force
-          eas build:configure
+          # Skip build:configure since we've manually configured everything
+          eas init --non-interactive --force --skip-credentials-check
+          eas update:configure
 
       - name: Build Android APK
         run: |
-          eas build -p android --profile production --non-interactive
+          eas build -p android --profile production --non-interactive --no-wait
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EAS_NO_VCS: 1
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
