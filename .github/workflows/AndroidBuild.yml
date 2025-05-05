@@ -3,7 +3,7 @@ name: Build Android APK with EAS
 on:
   push:
     branches:
-      - main # Or the branch you want to trigger the build from
+      - main
 
 jobs:
   build:
@@ -13,34 +13,42 @@ jobs:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # Using the latest major version
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x # Use a specific LTS version for stability
+          node-version: 20.x
 
       - name: Install Expo CLI and EAS CLI
         run: |
-          npm config set registry https://registry.npmjs.org/ # Explicitly set registry
-          npm cache clean --force # Clear npm cache
-          npm install -g expo-cli@latest # Specify latest
-          npm install -g eas-cli@latest
-          
+          npm install -g expo-cli eas-cli
+
       - name: Verify Installation
         run: |
           expo --version
-          eas --version # Verify installation
+          eas --version
 
-      - name: Initialize EAS Project (non-interactive)
+      - name: Configure EAS
         run: |
-          eas init --non-interactive --force
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          # Create complete eas.json configuration
+          echo '{
+            "cli": {
+              "appVersionSource": "remote"
+            },
+            "build": {
+              "production": {
+                "android": {
+                  "buildType": "apk",
+                  "gradleCommand": ":app:assembleRelease"
+                }
+              }
+            }
+          }' > eas.json
 
-      - name: Configure appVersionSource
-        run: |
-          echo '{"cli":{"appVersionSource":"remote"}}' > ./eas.json
+          # Verify configuration
+          cat eas.json
+          eas whoami
 
       - name: Build Android APK
         run: |
@@ -52,4 +60,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: ./build/android/*.apk # Adjust the path if necessary
+          path: ./build/android/*.apk
