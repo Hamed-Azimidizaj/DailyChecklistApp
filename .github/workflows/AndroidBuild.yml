@@ -22,29 +22,27 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install -g expo-cli eas-cli
+          npm install -g eas-cli
           npm install
 
       - name: Configure project files
         run: |
-          # Create/update eas.json with Android configuration
+          # Create complete eas.json
           echo '{
             "build": {
               "production": {
                 "android": {
                   "buildType": "apk",
-                  "gradleCommand": ":app:assembleRelease",
-                  "withoutCredentials": false
+                  "gradleCommand": ":app:assembleRelease"
                 }
               }
             },
             "cli": {
-              "requireCommit": false,
               "promptToConfigurePushNotifications": false
             }
           }' > eas.json
 
-          # Update app.json with required fields
+          # Ensure app.json has required Android config
           if [ -f "app.json" ]; then
             jq '.expo.android.package = "com.HAZdev.dailychecklist" | .expo.android.versionCode = 1' app.json > app.tmp.json && mv app.tmp.json app.json
           else
@@ -59,10 +57,10 @@ jobs:
             }' > app.json
           fi
 
-      - name: Initialize EAS (non-interactive)
+      - name: Initialize EAS
         run: |
-          # Skip build:configure since we've manually configured everything
-          eas init --non-interactive --force --skip-credentials-check
+          # Force initialization without prompts
+          echo -e "y" | eas init --non-interactive
           eas update:configure
 
       - name: Build Android APK
@@ -73,7 +71,6 @@ jobs:
           EAS_NO_VCS: 1
 
       - name: Upload APK
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
