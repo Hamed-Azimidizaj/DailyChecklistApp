@@ -1,0 +1,12 @@
+{
+  "cli": {
+    "version": ">= 3.13.0",
+    "appVersionSource": "project"
+  },
+  "build": {
+    "production": {
+      "developmentClient": false,
+      "distribution": "internal"
+    }
+  }
+}
