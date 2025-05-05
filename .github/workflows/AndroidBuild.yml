@@ -60,7 +60,7 @@ jobs:
       - name: Initialize EAS
         run: |
           # Force initialization without prompts
-          echo -e "y" | eas init --non-interactive
+          echo -e "y" | eas init --non-interactive --force
           eas update:configure
 
       - name: Build Android APK
