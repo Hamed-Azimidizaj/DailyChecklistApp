@@ -35,10 +35,5 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "daily-checklist-app"
-      }
-    }
   }
 }
