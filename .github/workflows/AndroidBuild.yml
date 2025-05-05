@@ -47,7 +47,7 @@ jobs:
           }' > eas.json
 
           # Link project to your Expo account
-          eas init --non-interactive --force --id checklist-app
+          eas init --non-interactive --force
 
           # Verify configuration
           cat eas.json
