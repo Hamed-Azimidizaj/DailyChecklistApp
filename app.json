@@ -20,11 +20,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.dailychecklist",
+      "bundleIdentifier": "com.HAZdev.dailychecklist",
       "buildNumber": "1.0.0"
     },
     "android": {
-      "package": "com.yourcompany.dailychecklist",
+      "package": "com.HAZdev.dailychecklist",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -37,7 +37,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "your-project-id-here"
+        "projectId": "daily-checklist-app"
       }
     }
   }
