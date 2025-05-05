@@ -32,9 +32,15 @@ jobs:
           expo --version
           eas --version # Verify installation
 
-      - name: Configure EAS
+      - name: Initialize EAS Project (non-interactive)
         run: |
-          expo config --non-interactive
+          eas init --non-interactive --force
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Configure appVersionSource
+        run: |
+          echo '{"cli":{"appVersionSource":"remote"}}' > ./eas.json
 
       - name: Build Android APK
         run: |
