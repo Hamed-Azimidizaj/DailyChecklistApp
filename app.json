@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "dailychecklistapp",
-    "slug": "snack-242ee7c8-b8cc-4220-bd51-107167fe6f7b",
+    "name": "DailyChecklistApp",
+    "slug": "daily-checklist-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,17 +12,33 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.dailychecklist",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.yourcompany.dailychecklist",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
     }
   }
 }
