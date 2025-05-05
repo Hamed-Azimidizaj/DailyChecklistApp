@@ -20,46 +20,46 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Install Expo CLI and EAS CLI
+      - name: Install dependencies
         run: |
           npm install -g expo-cli eas-cli
+          npm install
 
-      - name: Verify Installation
+      - name: Configure project
         run: |
-          expo --version
-          eas --version
-
-      - name: Configure EAS Project
-        run: |
-          # Create complete eas.json configuration
+          # Install jq for JSON manipulation
+          sudo apt-get install -y jq
+          
+          # Update SDK version if needed
+          jq '.expo.sdkVersion = "49.0.0"' app.json > app.tmp.json && mv app.tmp.json app.json
+          
+          # Create production eas.json
           echo '{
-            "cli": {
-              "appVersionSource": "remote"
-            },
             "build": {
               "production": {
                 "android": {
                   "buildType": "apk",
-                  "gradleCommand": ":app:assembleRelease"
+                  "gradleCommand": ":app:assembleRelease",
+                  "withoutCredentials": false
+                },
+                "env": {
+                  "ENVIRONMENT": "production"
                 }
               }
             }
           }' > eas.json
 
-          # Link project to your Expo account
+      - name: Initialize EAS
+        run: |
           eas init --non-interactive --force
-
-          # Verify configuration
-          cat eas.json
-          eas project:info
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          eas build:configure
 
       - name: Build Android APK
         run: |
           eas build -p android --profile production --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EAS_NO_VCS: 1
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
